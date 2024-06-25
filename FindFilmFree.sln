@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FindFilmFree.Application", "FindFilmFree.Application", "{DF011E4F-1B3F-4A6A-A165-B231DA8E3A1C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FindFilmFree.Domain", "FindFilmFree.Domain", "{142188E7-D58E-436F-B6EC-F88B2747EA0F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FindFilmFree.Infrastructure", "FindFilmFree.Infrastructure", "{45A7D390-4EDA-4B97-B9B2-8ABE7DBA7373}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FindFilmFree.Ui", "FindFilmFree.Ui", "{73B2AEEF-7D28-4724-93FE-DFB33F077418}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindFilmFree.Console", "FindFilmFree.Ui\FindFilmFree.Console\FindFilmFree.Console.csproj", "{82511DE6-6DE4-430B-B726-CBA070736313}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindFilmFree.Infrastructure", "FindFilmFree.Infrastructure\FindFilmFree.Infrastructure\FindFilmFree.Infrastructure.csproj", "{C6DD1A4C-3C2F-4AC5-B241-DD2EEB4454F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindFilmFree.Domain", "FindFilmFree.Domain\FindFilmFree.Domain\FindFilmFree.Domain.csproj", "{5FFEDCE1-A0EB-4DD8-A516-A5BB37DE03FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindFilmFree.Application", "FindFilmFree.Application\FindFilmFree.Application\FindFilmFree.Application.csproj", "{600B91F3-E3A4-4282-BCBA-25AE1EF2CC89}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{82511DE6-6DE4-430B-B726-CBA070736313} = {73B2AEEF-7D28-4724-93FE-DFB33F077418}
+		{C6DD1A4C-3C2F-4AC5-B241-DD2EEB4454F6} = {45A7D390-4EDA-4B97-B9B2-8ABE7DBA7373}
+		{5FFEDCE1-A0EB-4DD8-A516-A5BB37DE03FF} = {142188E7-D58E-436F-B6EC-F88B2747EA0F}
+		{600B91F3-E3A4-4282-BCBA-25AE1EF2CC89} = {DF011E4F-1B3F-4A6A-A165-B231DA8E3A1C}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{82511DE6-6DE4-430B-B726-CBA070736313}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82511DE6-6DE4-430B-B726-CBA070736313}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82511DE6-6DE4-430B-B726-CBA070736313}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82511DE6-6DE4-430B-B726-CBA070736313}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6DD1A4C-3C2F-4AC5-B241-DD2EEB4454F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6DD1A4C-3C2F-4AC5-B241-DD2EEB4454F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6DD1A4C-3C2F-4AC5-B241-DD2EEB4454F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6DD1A4C-3C2F-4AC5-B241-DD2EEB4454F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FFEDCE1-A0EB-4DD8-A516-A5BB37DE03FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FFEDCE1-A0EB-4DD8-A516-A5BB37DE03FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FFEDCE1-A0EB-4DD8-A516-A5BB37DE03FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FFEDCE1-A0EB-4DD8-A516-A5BB37DE03FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{600B91F3-E3A4-4282-BCBA-25AE1EF2CC89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{600B91F3-E3A4-4282-BCBA-25AE1EF2CC89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{600B91F3-E3A4-4282-BCBA-25AE1EF2CC89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{600B91F3-E3A4-4282-BCBA-25AE1EF2CC89}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

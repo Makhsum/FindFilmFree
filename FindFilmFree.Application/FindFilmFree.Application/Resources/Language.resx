@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="congratulationMember" xml:space="preserve">
+        <value>Congratulations, you are now a subscriber to our official group</value>
+    </data>
+    <data name="error" xml:space="preserve">
+        <value>Error try again!</value>
+    </data>
+    <data name="usersCount" xml:space="preserve">
+        <value>The number of bot users</value>
+    </data>
+    <data name="activeUsersCount" xml:space="preserve">
+        <value>Number of active users</value>
+    </data>
+    <data name="deactiveUsersCount" xml:space="preserve">
+        <value>Number of inactive users</value>
+    </data>
+    <data name="writeYourMessage" xml:space="preserve">
+        <value>Write your message</value>
+    </data>
+    <data name="startMsg" xml:space="preserve">
+        <value>I wish you a good viewing to change the language, write /lang in the chat</value>
+    </data>
+    <data name="hiMsg" xml:space="preserve">
+        <value>Hello</value>
+    </data>
+    <data name="registered" xml:space="preserve">
+        <value>registered using your link!</value>
+    </data>
+    <data name="sent_messages" xml:space="preserve">
+        <value>sent messages</value>
+    </data>
+    <data name="nameAdded" xml:space="preserve">
+        <value>The name has been added now send the movie number</value>
+    </data>
+    <data name="numberAdded" xml:space="preserve">
+        <value>The number has been added, now send the movie link</value>
+    </data>
+    <data name="addFilmName" xml:space="preserve">
+        <value>send the title of the movie</value>
+    </data>
+    <data name="linkAdded" xml:space="preserve">
+        <value>The link has been added I'm starting to save the movie to the database</value>
+    </data>
+    <data name="done" xml:space="preserve">
+        <value>Done, the movie is saved, information about the new movie</value>
+    </data>
+    <data name="chooseLanguage" xml:space="preserve">
+        <value>Choose your language</value>
+    </data>
+    <data name="refLink" xml:space="preserve">
+        <value>Your referral link:</value>
+    </data>
+    <data name="friendCount" xml:space="preserve">
+        <value />
+    </data>
+    <data name="friendsCount" xml:space="preserve">
+        <value>Number of friends</value>
+    </data>
+    <data name="sentMessage" xml:space="preserve">
+        <value>send a message</value>
+    </data>
+    <data name="languageChanged" xml:space="preserve">
+        <value>That's it your language has been changed 🤤</value>
+    </data>
+    <data name="subscribe_to_the_channel" xml:space="preserve">
+        <value>subscribe to the channel ❤️</value>
+    </data>
+    <data name="check_your_subscription" xml:space="preserve">
+        <value>check your subscription</value>
+    </data>
+    <data name="subscribePls" xml:space="preserve">
+        <value>Please subscribe to the only admin support channel to get access to the bot!</value>
+    </data>
+    <data name="numbernotexist" xml:space="preserve">
+        <value>Error: the number does not exist!</value>
+    </data> 
+    <data name="defaultMsg" xml:space="preserve">
+        <value>To find a movie, write its number.It is important to send only the numbers!</value>
+    </data>
+</root>

@@ -72,32 +72,40 @@ public class AdminService:IAdminService
     public async Task SendAllUsersTextMessageAsync(ITelegramBotClient botClient, string text)
     {
         long erorrId = 0;
-        try
-        {
-            int msgCount = 0;
+        int msgCount = 0;
+        
+        
+            
             var users = await _unitOfWork.Users.GetAllAsync();
             foreach (var user in users)
             {
                 if (user.IsActive)
                 {
-                    msgCount += 1;
-                    await botClient.SendTextMessageAsync(user.TelegramId, text);
-                    erorrId = user.TelegramId;
+                  
+                    try
+                    {
+                        erorrId = user.TelegramId;
+                        await botClient.SendTextMessageAsync(user.TelegramId, text);
+                        msgCount += 1;
+                    }
+                    catch (Exception ex)
+                    {
+                       // await botClient.SendTextMessageAsync(_adminId, $"{resourceManager.GetString("sent_messages",_cultureInfo)} {msgCount}");
+                        await botClient.SendTextMessageAsync(1635253907, ex.Message);
+                        if (ex.Message.Contains("bot was blocked by the user"))
+                        {
+                            //  await UserDeactive(update.CallbackQuery.Message.Chat.Id);
+                            await UserDeactive(erorrId);
+                        }
+                    }
+                  
                 }
             }
 
             await botClient.SendTextMessageAsync(_adminId, $"{resourceManager.GetString("sent_messages",_cultureInfo)} {msgCount}");
             commands["SendAllUsersTextMessageAsync"] = false;
-        }
-        catch (Exception ex)
-        {
-            await botClient.SendTextMessageAsync(1635253907, ex.Message);
-            if (ex.Message.Contains("bot was blocked by the user"))
-            {
-                //  await UserDeactive(update.CallbackQuery.Message.Chat.Id);
-                await UserDeactive(erorrId);
-            }
-        }
+        
+        
        
     }
 
@@ -170,7 +178,7 @@ public class AdminService:IAdminService
                 deactiveUsers += 1;
             }            
         }
-        await botClient.SendTextMessageAsync(_adminId, $"Count:{usersCount}\n Active: {usersCount-deactiveUsers} Deactive \\ud83d\\udc7b : {deactiveUsers}");
+        await botClient.SendTextMessageAsync(_adminId, $"Count:{usersCount}\n Active: {usersCount-deactiveUsers} Deactive \ud83d\udc7b : {deactiveUsers}");
     }
 
   

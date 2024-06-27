@@ -1,6 +1,6 @@
 namespace FindFilmFree.Application.Abstraction.Interfaces;
 
-public interface IModerService
+public interface IModerService:IAdminService
 {
     
 }

@@ -96,4 +96,7 @@
     <data name="defaultMsg" xml:space="preserve">
         <value>To find a movie, write its number.It is important to send only the numbers!</value>
     </data>
+    <data name="sentModerUserName" xml:space="preserve">
+        <value>Send the user's nickname!</value>
+    </data>
 </root>

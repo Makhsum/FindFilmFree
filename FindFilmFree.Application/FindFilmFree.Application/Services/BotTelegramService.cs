@@ -15,18 +15,23 @@ public class BotTelegramService
 {
     private readonly ITelegramBotClient _botClient;
     private readonly IUnitOfWork _unitOfWork;
-    private const long adminChatId = 1635253907;
+    private  readonly long _adminChatId;
+    private User _user = default;
     private AdminService _adminService = default;
+    private ModerService _moderService = default;
     private bool sendMessage = false;
+    private string[] moderCommands = { }; 
   
     ResourceManager resourceManager = new ResourceManager("FindFilmFree.Application.Resources.Language", typeof(BotTelegramService).Assembly);
 
     
-    public BotTelegramService(ITelegramBotClient client,IUnitOfWork unitOfWork)
+    public BotTelegramService(ITelegramBotClient client,IUnitOfWork unitOfWork,long ownerId)
     {
         _botClient = client;
         _unitOfWork = unitOfWork;
-        _adminService = new AdminService(unitOfWork, 1635253907);
+        _adminService = new AdminService(unitOfWork, ownerId);
+        _moderService = new ModerService(unitOfWork);
+        _adminChatId = ownerId;
     }
     
     public async Task StartAsync()
@@ -61,8 +66,23 @@ public class BotTelegramService
     {
        
         List<Task> tasks = new List<Task>();
+       
+        
         if (update.Type == UpdateType.CallbackQuery)
         {
+            _user = await _unitOfWork.Users.GetByTelegramIdAsync(update.CallbackQuery.Message.Chat.Id);
+            if (_user!=null)
+            {
+                if (update.CallbackQuery.Message.Chat.Id==_adminChatId)
+                {
+                   tasks.Add(_adminService.HandleAdminCommands(botClient,update));
+                }
+
+                if (_user.IsActive)
+                {
+                    tasks.Add(  _moderService.HandleAdminCommands(botClient, update));
+                }
+            }
             var callbackquery = update.CallbackQuery;
             try
             {
@@ -70,7 +90,7 @@ public class BotTelegramService
             }
             catch (Exception ex)
             {
-                await _botClient.SendTextMessageAsync(1635253907, ex.Message);
+                await _botClient.SendTextMessageAsync(_adminChatId, ex.Message);
                 if (ex.Message.Contains("bot was blocked by the user"))
                 {
                     //  await UserDeactive(update.CallbackQuery.Message.Chat.Id);
@@ -91,19 +111,18 @@ public class BotTelegramService
         if (userr!=null)
         {
             culture = new CultureInfo(userr.Language);
+            if (userr.IsModer)
+            {
+                tasks.Add( _moderService.HandleAdminCommands(botClient,update));
+            }
         }
-        
-        
         tasks.Add(HandleCommands(update));
         
-        if (chatId==adminChatId)
+        if (chatId==_adminChatId)
         {
            
             tasks.Add( _adminService.HandleAdminCommands(botClient,update));
         }
-       
-       
-      
 
       await  Task.WhenAll(tasks);
 
@@ -118,6 +137,10 @@ public class BotTelegramService
             
             if (user!=null)
             {
+                if (chatId==_adminChatId)
+                {
+                    
+                }
                   culture = new CultureInfo(user.Language);
             }
             if (await IsMemberOfChannel(chatId))
@@ -187,6 +210,7 @@ public class BotTelegramService
                         {
                             
                             await _botClient.SendTextMessageAsync(chatId, $"{resourceManager.GetString("error",culture)}");
+                            await _botClient.SendTextMessageAsync(_adminChatId, e.Message);
                         }
                        
                         break;
@@ -199,7 +223,7 @@ public class BotTelegramService
                     await UserDeactive(chatId);
                 }
 
-                await _botClient.SendTextMessageAsync(1635253907, e.Message);
+                await _botClient.SendTextMessageAsync(_adminChatId, e.Message);
                 Console.WriteLine(e.Message);
                 return;
             }
@@ -218,162 +242,197 @@ public class BotTelegramService
             if (userr!=null)
             {
                 culture = new CultureInfo(userr.Language);
-            }
-            try
-            {
-                if (chatId==adminChatId&&messageText.StartsWith("/sendMsg")||chatId==adminChatId&&messageText.StartsWith("/addfilm")||chatId==adminChatId&&messageText.StartsWith("/getusersinfo"))
-                {
            
-                   return;
-                }
-                if (messageText.StartsWith("/start"))
+               
+            } 
+            try
                 {
-                    if (chatId==adminChatId)
+                    
+                    if (messageText.StartsWith("/start"))
                     {
-                        keyboardMarkup =   new ReplyKeyboardMarkup(new[]
+                        if (chatId==_adminChatId)
                         {
-                            new KeyboardButton[] { "/sendMsg" },
-                            new KeyboardButton[] { "/addfilm" },
-                            new KeyboardButton[] { "/getusersinfo" },
-                        })
+                            
+                            keyboardMarkup =   new ReplyKeyboardMarkup(new[]
+                            {
+                                new KeyboardButton[] { "/sendMsg" },
+                                new KeyboardButton[] { "/addfilm" },
+                                new KeyboardButton[] { "/getusersinfo" },
+                                new KeyboardButton[] { "/setModer" },
+                                new KeyboardButton[] { "/deleteModer" },
+                                new KeyboardButton[] { "/updateFilmData" },
+                            })
+                            {
+                                ResizeKeyboard = true
+                            };
+                        }
+                        
+                        else if (userr!=null&& userr.IsModer)
                         {
-                            ResizeKeyboard = true
-                        };
-                    }
-                    await _botClient.SendTextMessageAsync(chatId, $"{resourceManager.GetString("hiMsg", culture)} {update.Message.Chat.Username??update.Message.Chat.FirstName} {resourceManager.GetString("startMsg", culture)} \ud83c\udf7f",replyMarkup:keyboardMarkup);
-                    if (await IsUserExist(chatId))
-                    {
-                        var user = await _unitOfWork.Users.GetByTelegramIdAsync(chatId) ;
-                        if (!user.IsActive)
+                            keyboardMarkup =   new ReplyKeyboardMarkup(new[]
+                            {
+                                new KeyboardButton[] { "/addfilm" },
+                                new KeyboardButton[] { "/updateFilmData" },
+                                
+                            })
+                            {
+                                ResizeKeyboard = true
+                            };
+                        }
+                        await _botClient.SendTextMessageAsync(chatId, $"{resourceManager.GetString("hiMsg", culture)} {update.Message.Chat.Username??update.Message.Chat.FirstName} {resourceManager.GetString("startMsg", culture)} \ud83c\udf7f",replyMarkup:keyboardMarkup);
+                        if (await IsUserExist(chatId))
                         {
+                            var user = await _unitOfWork.Users.GetByTelegramIdAsync(chatId) ;
+                            if (!user.IsActive)
+                            {
+                                user.IsActive = true;
+                                await _unitOfWork.CompleteAsync();
+                            }
+                            return;
+                        }
+                        else
+                        {
+                            User user = new User();
+                            user.TelegramId = update.Message.Chat.Id;
+                            user.UserName = update.Message.Chat.Username ?? " ";
+                            user.Name = update.Message.Chat.FirstName ?? " ";
+                            user.LastName = update.Message.Chat.LastName ?? " ";
                             user.IsActive = true;
-                            await _unitOfWork.CompleteAsync();
-                        }
-                        return;
-                    }
-                    else
-                    {
-                        User user = new User();
-                        user.TelegramId = update.Message.Chat.Id;
-                        user.UserName = update.Message.Chat.Username ?? " ";
-                        user.Name = update.Message.Chat.FirstName ?? " ";
-                        user.LastName = update.Message.Chat.LastName ?? " ";
-                        user.IsActive = true;
-                        user.ReferrerId = update.Message.Chat.Id;
-                        user.Language = "default";
-                        long referrerId = 0;
+                            user.ReferrerId = update.Message.Chat.Id;
+                            user.Language = "default";
+                            user.IsModer = false;
+                            long referrerId = 0;
 
-                        if (messageText.Length > 7)
-                        {
-                            var referrerString = messageText.Substring(7);
-                            if (long.TryParse(referrerString, out referrerId))
+                            if (messageText.Length > 7)
                             {
-                                var frindUser = await _unitOfWork.Users.GetByTelegramIdAsync(referrerId);
-                                if (frindUser!=null)
+                                var referrerString = messageText.Substring(7);
+                                if (long.TryParse(referrerString, out referrerId))
                                 {
-                                    if (user.ReferrerId!=referrerId)
+                                    var frindUser = await _unitOfWork.Users.GetByTelegramIdAsync(referrerId);
+                                    if (frindUser!=null)
                                     {
-                                        user.FriendReferrerId = referrerId;
-                                        await _botClient.SendTextMessageAsync(referrerId, $"{user.UserName} {resourceManager.GetString("registered",culture)}");
+                                        if (user.ReferrerId!=referrerId)
+                                        {
+                                            user.FriendReferrerId = referrerId;
+                                            await _botClient.SendTextMessageAsync(referrerId, $"{user.UserName} {resourceManager.GetString("registered",culture)}");
+                                        }
+                                       
                                     }
-                                   
+                                    
+                                 
                                 }
-                                
-                             
                             }
+                            await _unitOfWork.Users.AddAsync(user);
+                            await _unitOfWork.CompleteAsync();
+                            return;
+                          // 
                         }
-                        await _unitOfWork.Users.AddAsync(user);
-                        await _unitOfWork.CompleteAsync();
-                        return;
-                      // 
+                    
+                        
+
+                       
                     }
-                
-                    
-
-                   
-                }
-                switch (update.Message.Text)
-                {
-                    
-                   case "/lang":
-                       InlineKeyboardMarkup inlineKeyboard = new(new[]
-                       {
-                           // first row
-                           new []
+                    switch (update.Message.Text)
+                    {
+                        
+                       case "/lang":
+                           InlineKeyboardMarkup inlineKeyboard = new(new[]
                            {
-                               InlineKeyboardButton.WithCallbackData(text: "en - \ud83c\uddec\ud83c\udde7", callbackData: "default"),
-                               InlineKeyboardButton.WithCallbackData(text: "de - \ud83c\udde9\ud83c\uddea", callbackData: "de"),
-                           },
-                           // second row
-                           new []
-                           {
-                               InlineKeyboardButton.WithCallbackData(text: "ru - 🇷🇺", callbackData: "ru"),
-                           },
-                       });
-                       await _botClient.SendTextMessageAsync(chatId,
-                           $"{resourceManager.GetString("chooseLanguage", culture)}",replyMarkup:inlineKeyboard);
-                        break;
-                   case "/referal":
-                       var me = await _botClient.GetMeAsync();
-                       await _botClient.SendTextMessageAsync(chatId, $"{resourceManager.GetString("refLink",culture)} https://t.me/{me.Username}?start={chatId}");
-                       break;
-                   case "/friendscount":
-                       var users = await _unitOfWork.Users.GetAllAsync();
-                       var friendsCount = users.Where(u => u.FriendReferrerId == chatId).Count();
-                       await _botClient.SendTextMessageAsync(chatId, $"{resourceManager.GetString("friendsCount",culture)} {friendsCount}");
-                       break;
-                   case "/help":
-                       await _botClient.SendTextMessageAsync(chatId,$"{resourceManager.GetString("defaultMsg",culture)}");
-                       break;
-                   default:
-                        if (chatId==adminChatId)return;
-                        if (await IsMemberOfChannel(update.Message.Chat.Id))
-                        {
-                            int filmNumber = 0;
-                            bool intParse = int.TryParse(update.Message.Text, out filmNumber);
-                            if (intParse)
+                               // first row
+                               new []
+                               {
+                                   InlineKeyboardButton.WithCallbackData(text: "en - \ud83c\uddec\ud83c\udde7", callbackData: "default"),
+                                   InlineKeyboardButton.WithCallbackData(text: "de - \ud83c\udde9\ud83c\uddea", callbackData: "de"),
+                               },
+                               // second row
+                               new []
+                               {
+                                   InlineKeyboardButton.WithCallbackData(text: "ru - 🇷🇺", callbackData: "ru"),
+                               },
+                           });
+                           await _botClient.SendTextMessageAsync(chatId,
+                               $"{resourceManager.GetString("chooseLanguage", culture)}",replyMarkup:inlineKeyboard);
+                            break;
+                       case "/referal":
+                           var me = await _botClient.GetMeAsync();
+                           await _botClient.SendTextMessageAsync(chatId, $"{resourceManager.GetString("refLink",culture)} https://t.me/{me.Username}?start={chatId}");
+                           break;
+                       case "/friendscount":
+                           var users = await _unitOfWork.Users.GetAllAsync();
+                           var friendsCount = users.Where(u => u.FriendReferrerId == chatId).Count();
+                           await _botClient.SendTextMessageAsync(chatId, $"{resourceManager.GetString("friendsCount",culture)} {friendsCount}");
+                           break;
+                       case "/help":
+                           await _botClient.SendTextMessageAsync(chatId,$"{resourceManager.GetString("defaultMsg",culture)}");
+                           break;
+                       default:
+                            if (chatId==_adminChatId)return;
+                            if (userr!=null)
                             {
-                                  var film =  await  _unitOfWork.Films.GetByNumber(filmNumber);
-                                  if (film!=null)
-                                  {
-                                      string filmDate = 
-                                          $"<b>Name</b>: {film.Name}\n" +
-                                          $"<b>Number</b>: {film.Number}\n" +
-                                          $"<b>Link</b>: {film.Link}";
-                                      await _botClient.SendTextMessageAsync(chatId, filmDate, parseMode: ParseMode.Html);
-                                      return;
-                                  }
-                                  else
-                                  {
-                                      await _botClient.SendTextMessageAsync(chatId, $"{resourceManager.GetString("numbernotexist",culture)}");
-                                      return;
-                                  }
-                                
+                                if (userr.IsModer)
+                                {
+                                    return;
+                                }
                             }
-                            else
+                            if (await IsMemberOfChannel(update.Message.Chat.Id))
                             {
-                                await _botClient.SendTextMessageAsync(chatId,$"{resourceManager.GetString("error",culture)}");
-                                return;
+                                int filmNumber = 0;
+                                bool intParse = int.TryParse(update.Message.Text, out filmNumber);
+                                if (intParse)
+                                {
+                                      var film =  await  _unitOfWork.Films.GetByNumber(filmNumber);
+                                      if (film!=null)
+                                      {
+                                          string filmDate = 
+                                              $"<b>Name</b>: {film.Name}\n" +
+                                              $"<b>Number</b>: {film.Number}\n" +
+                                              $"<b>Link</b>: {film.Link}";
+                                          await _botClient.SendTextMessageAsync(chatId, filmDate, parseMode: ParseMode.Html);
+                                          return;
+                                      }
+                                      else
+                                      {
+                                          await _botClient.SendTextMessageAsync(chatId, $"{resourceManager.GetString("numbernotexist",culture)}");
+                                          return;
+                                      }
+                                    
+                                }
+                                else
+                                {
+                                    await _botClient.SendTextMessageAsync(chatId,$"{resourceManager.GetString("error",culture)}");
+                                    return;
+                                }
+
+                               
                             }
 
-                           
-                        }
+                            break;
 
-                        break;
-
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                if (e.Message.Contains("bot was blocked by the user"))
+                catch (Exception e)
                 {
-                    await UserDeactive(chatId);
+                    if (e.Message.Contains("bot was blocked by the user"))
+                    {
+                        await UserDeactive(chatId);
+                    }
+                    await _botClient.SendTextMessageAsync(_adminChatId, e.Message);
                 }
-                await _botClient.SendTextMessageAsync(1635253907, e.Message);
-            }
-
+            
         }
 
+        private List<List<ReplyKeyboardMarkup>> CreateKeyboard(string[] commands)
+        {
+            List<List<ReplyKeyboardMarkup>> _keyboard = new List<List<ReplyKeyboardMarkup>>();
+
+
+            foreach (var co in commands)
+            {
+                _keyboard.Add(new List<ReplyKeyboardMarkup>(){new ReplyKeyboardMarkup(co)});
+            }
+
+            return _keyboard;
+        }
     
     private Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception,CancellationToken cancellationToken)
     {
@@ -424,7 +483,7 @@ public class BotTelegramService
         }
         catch (Exception e)
         {
-            await _botClient.SendTextMessageAsync(1635253907, e.Message);
+            await _botClient.SendTextMessageAsync(_adminChatId, e.Message);
             if (e.Message.Contains("bot was blocked by the user"))
             {
                 await UserDeactive(chatId);

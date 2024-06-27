@@ -58,6 +58,7 @@ public class UserRepository:Repository<User>,IUserRepository
                 oldUser.Name = updatedEntity.Name;
                 oldUser.LastName = updatedEntity.LastName;
                 oldUser.IsActive = updatedEntity.IsActive;
+                oldUser.IsModer = updatedEntity.IsModer;
                 return true;
             }
            
@@ -77,6 +78,16 @@ public class UserRepository:Repository<User>,IUserRepository
     {
         return await _dbSet.ToListAsync();
     }
+
+    public async Task<IEnumerable<User>> GetAllPaginationAsync(int skip, int take)
+    {
+        return await _dbSet.Skip(skip).Take(take).ToListAsync();
+    }
+
+    public async Task<int> GetUsersCount() => await  _dbSet.CountAsync();
+    public async Task<User?> GetByUserName(string username) => await _dbSet.FirstOrDefaultAsync(u => u.UserName == username);
+    
+
 
     public override async Task<User?> GetByIdAsync(int id)
     {

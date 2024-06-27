@@ -23,6 +23,18 @@ public class FilmRepository:Repository<Film>,IFilmRepository
         return await _dbSet.FirstOrDefaultAsync(f => f.Number == number);
     }
 
+    public async Task<bool> DeleteByNumber(int number)
+    {
+        var film = await _dbSet.FirstOrDefaultAsync(f => f.Number == number);
+        if (film!=null)
+        {
+            _dbSet.Remove(film);
+            return true;
+        }
+
+        return false;
+    }
+
     public override async Task<bool> AddAsync(Film entity)
     {
         try

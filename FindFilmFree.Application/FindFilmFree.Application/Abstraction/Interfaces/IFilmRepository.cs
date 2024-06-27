@@ -6,4 +6,5 @@ public interface IFilmRepository:IRepository<Film>
 {
     Task<int> FilmsCount();
     Task<Film?> GetByNumber(int number);
+    Task<bool> DeleteByNumber(int number);
 }

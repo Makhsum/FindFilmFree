@@ -194,5 +194,11 @@ namespace FindFilmFree.Application {
                 return ResourceManager.GetString("defaultMsg", resourceCulture);
             }
         }
+        
+        internal static string sentModerUserName {
+            get {
+                return ResourceManager.GetString("sentModerUserName", resourceCulture);
+            }
+        }
     }
 }

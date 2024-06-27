@@ -86,4 +86,7 @@
     <data name="defaultMsg" xml:space="preserve">
         <value>Чтобы найти фильм напишите его номер.Важно отправьте только цифры!</value>
     </data>
+    <data name="sentModerUserName" xml:space="preserve">
+        <value>Отправьте ник пользователя!</value>
+    </data>
 </root>

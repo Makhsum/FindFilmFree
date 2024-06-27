@@ -93,4 +93,7 @@
     <data name="defaultMsg" xml:space="preserve">
         <value>Um einen Film zu finden, schreibe seine Nummer auf.Wichtig Senden Sie nur die Zahlen!</value>
     </data>
+    <data name="sentModerUserName" xml:space="preserve">
+        <value>Senden Sie den Spitznamen des Benutzers!</value>
+    </data>
 </root>

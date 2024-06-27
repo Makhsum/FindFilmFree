@@ -10,4 +10,5 @@ public class User:EntityBase
     public long FriendReferrerId { get; set; }
     public string Language { get; set; }
     public bool IsActive { get; set; }
+    public bool IsModer { get; set; }
 }

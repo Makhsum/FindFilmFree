@@ -6,11 +6,11 @@ namespace FindFilmFree.Application.Abstraction.Interfaces;
 public interface IAdminService
 {
     Task HandleAdminCommands(ITelegramBotClient client, Update update);
-    Task SendAllUsersTextMessageAsync(ITelegramBotClient botClient,string text);
-    Task AddFilmAsync(ITelegramBotClient botClient);
+    
+    Task AddFilmAsync(ITelegramBotClient botClient,Update update);
     Task AddFilmNameAsync(ITelegramBotClient botClient,Update update);
     Task AddFilmNumberAsync(ITelegramBotClient botClient,Update update);
     Task AddFilmLinkAsync(ITelegramBotClient botClient,Update update);
-    Task GetUsersCount(ITelegramBotClient botClient);
-    
+    Task UpdateFilmData(ITelegramBotClient botClient, Update update);
+
 }

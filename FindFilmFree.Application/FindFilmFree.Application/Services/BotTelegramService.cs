@@ -245,8 +245,8 @@ public class BotTelegramService
            
                
             } 
-            try
-                {
+            try 
+            {
                     
                     if (messageText.StartsWith("/start"))
                     {
@@ -409,15 +409,15 @@ public class BotTelegramService
                             break;
 
                     }
-                }
-                catch (Exception e)
-                {
+            }
+            catch (Exception e) 
+            {
                     if (e.Message.Contains("bot was blocked by the user"))
                     {
                         await UserDeactive(chatId);
                     }
-                    await _botClient.SendTextMessageAsync(_adminChatId, e.Message);
-                }
+                    await _botClient.SendTextMessageAsync(_adminChatId, e.Message); 
+            }
             
         }
 

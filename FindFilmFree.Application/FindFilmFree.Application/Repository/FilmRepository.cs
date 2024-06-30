@@ -52,14 +52,7 @@ public class FilmRepository:Repository<Film>,IFilmRepository
     {
         try
         {
-            try
-            {
 
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("");
-            }
             var user = await _dbSet.FirstOrDefaultAsync(u => u.Id == id);
             if (user!=null)
             {

@@ -101,6 +101,8 @@ public class UserRepository:Repository<User>,IUserRepository
         }
     }
 
+  
+
     public override async Task<User?> GetByTelegramIdAsync(long telegramId)
     {
         try

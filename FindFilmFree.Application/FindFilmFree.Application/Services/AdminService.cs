@@ -241,9 +241,19 @@ public class AdminService:IMainModerService
         if (parse)
         {
             _film.Number = number;
-            await botClient.SendTextMessageAsync(update.Message.Chat.Id, $"{resourceManager.GetString("numberAdded",_cultureInfo)}");
-            commands["AddFilmNumberAsync"] = false;
-            commands["AddFilmLinkAsync"] = true;
+            var film = await _unitOfWork.Films.GetByNumber(number);
+            if (film == null)
+            {
+                await botClient.SendTextMessageAsync(update.Message.Chat.Id, $"{resourceManager.GetString("numberAdded",_cultureInfo)}");
+                commands["AddFilmNumberAsync"] = false;
+                commands["AddFilmLinkAsync"] = true;
+            }
+            else
+            {
+                await botClient.SendTextMessageAsync(update.Message.Chat.Id,
+                    $"{resourceManager.GetString("error", _cultureInfo)}");
+            }
+          
         }
        
         

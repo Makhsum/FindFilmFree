@@ -7,6 +7,7 @@ using Telegram.Bot;
 IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json",optional:false,reloadOnChange:true).Build();
 string connectionString = configuration.GetConnectionString("SqliteConnection");
 string telegramBotToken = configuration["TelegramBot:token"];
+
 long ownerId = 0;
 bool ownerIdParse = long.TryParse(configuration["OwnerId"], out ownerId);
 if (ownerIdParse&&telegramBotToken!=null&&connectionString!=null)
@@ -18,3 +19,4 @@ if (ownerIdParse&&telegramBotToken!=null&&connectionString!=null)
     BotTelegramService botTelegramService = new BotTelegramService(client,unitOfWork:unitOfWork,ownerId);
     await botTelegramService.StartAsync();
 }
+
